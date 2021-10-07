@@ -1,0 +1,12 @@
+{
+	"name": "aws-serverless-demo",
+	"version": "0.0.1",
+	"description": "A quick demo of AWS serverless implementation with generic CRUD APIs",
+	"main": "index.js",
+	"scripts": {},
+	"keywords": [],
+	"author": "Simon X. L.",
+	"dependencies": {
+		"nanoid": "^3.1.29"
+	}
+}

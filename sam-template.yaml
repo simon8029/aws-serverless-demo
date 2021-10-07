@@ -1,0 +1,146 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Implementing REST API for AWS Serverless Demo
+
+Globals:
+  Function:
+    Runtime: nodejs14.x
+    Timeout: 60
+
+Resources:
+  GenericCRUDApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: generic-crud-api
+      StageName: dev
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: swagger.yaml
+
+  GetAllProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: generic-crud-getAllProducts
+      CodeUri: src/
+      Handler: index.getAllProducts
+      Policies:
+        DynamoDBReadPolicy:
+          TableName:
+            Ref: ProductsTable
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ProductsTable
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: GenericCRUDApi
+            Path: /
+            Method: GET
+
+  AddProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: generic-crud-addProduct
+      CodeUri: src/
+      Handler: index.addProduct
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName:
+            Ref: ProductsTable
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ProductsTable
+      Events:
+        Post:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: GenericCRUDApi
+            Path: /
+            Method: POST
+
+  GetProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: generic-crud-getProduct
+      CodeUri: src/
+      Handler: index.getProduct
+      Policies:
+        DynamoDBReadPolicy:
+          TableName:
+            Ref: ProductsTable
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ProductsTable
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: GenericCRUDApi
+            Path: /{id}
+            Method: GET
+
+  UpdateProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: generic-crud-updateProduct
+      CodeUri: src/
+      Handler: index.updateProduct
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName:
+            Ref: ProductsTable
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ProductsTable
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: GenericCRUDApi
+            Path: /{id}
+            Method: PUT
+
+  DeleteProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: generic-crud-deleteProduct
+      CodeUri: src/
+      Handler: index.deleteProduct
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName:
+            Ref: ProductsTable
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ProductsTable
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: GenericCRUDApi
+            Path: /{id}
+            Method: DELETE
+
+  ProductsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: aws-serverless-demo
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
