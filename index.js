@@ -3,15 +3,24 @@
 const service = require("./service.js");
 
 exports.getAllProducts = async (event) => {
-	const products = await service.getAllProducts();
-
-	return {
-		statusCode: 200,
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(products, null, 2),
-	};
+	try {
+		const products = await service.getAllProducts();
+		return {
+			statusCode: 200,
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(products, null, 2),
+		};
+	} catch (err) {
+		return {
+			statusCode: 500,
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(err, null, 2),
+		};
+	}
 };
 
 exports.addProduct = async (event) => {
