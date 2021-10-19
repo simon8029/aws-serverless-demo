@@ -31,13 +31,8 @@ exports.getProduct = async (id) => {
 	};
 
 	const dynamoDB = new aws.DynamoDB.DocumentClient();
-	try {
-		const result = await dynamoDB.get(params).promise();
-		return result.Item === undefined ? null : result.Item;
-	} catch (error) {
-		console.log(`Failed to get product with id "${id}": ${error}`);
-		throw error;
-	}
+	const result = await dynamoDB.get(params).promise();
+	return result.Item === undefined ? null : result.Item;
 };
 
 exports.getAllProducts = async () => {
@@ -46,13 +41,8 @@ exports.getAllProducts = async () => {
 	};
 
 	const dynamoDB = new aws.DynamoDB.DocumentClient();
-	try {
-		const results = await dynamoDB.scan(params).promise();
-		return results.Items;
-	} catch (error) {
-		console.log(`Failed to fetch products: ${error}`);
-		throw error;
-	}
+	const results = await dynamoDB.scan(params).promise();
+	return results.Items;
 };
 
 exports.updateProduct = async (id, product) => {
@@ -63,12 +53,7 @@ exports.updateProduct = async (id, product) => {
 	};
 
 	const dynamoDB = new aws.DynamoDB.DocumentClient();
-	try {
-		await dynamoDB.put(params).promise();
-	} catch (error) {
-		console.log(`Failed to update product: ${error}`);
-		throw error;
-	}
+	await dynamoDB.put(params).promise();
 };
 
 exports.deleteProduct = async (id) => {
@@ -80,10 +65,5 @@ exports.deleteProduct = async (id) => {
 	};
 
 	const dynamoDB = new aws.DynamoDB.DocumentClient();
-	try {
-		await dynamoDB.delete(params).promise();
-	} catch (error) {
-		console.log(`Failed to delete product with id "${id}": ${error}`);
-		throw error;
-	}
+	await dynamoDB.delete(params).promise();
 };
